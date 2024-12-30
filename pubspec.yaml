@@ -1,0 +1,42 @@
+name: diskigpt
+description: "Diski Fanatics Mobile App to socialise"
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  flutter_spinkit: ^5.2.1
+  awesome_dialog: ^3.2.1
+  firebase_core: ^3.6.0
+  firebase_auth: ^5.3.1
+  cloud_firestore: ^5.4.4
+  http: ^0.13.4
+  dash_chat_2: ^0.0.21
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^4.0.0
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/
+
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+
+    - family: Poppins Bold
+      fonts:
+        - asset: assets/fonts/Poppins-Bold.ttf
+          weight: 700
