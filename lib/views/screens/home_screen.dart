@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diskigpt/config/theme.dart';
 import 'package:diskigpt/views/widgets/app_bar_widget.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
+import '../../config/constants.dart';
 import '../widgets/post_card_widget.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -48,14 +50,16 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const DiskiAppBar(userName: '@conniemental'),
+      appBar: DiskiAppBar(
+        userName: FirebaseAuth.instance.currentUser?.displayName ?? 'Guest',
+        userImage: FirebaseAuth.instance.currentUser?.photoURL ?? Strings.defaultProfileImage,),
       body: ListView(
         padding: const EdgeInsets.all(8),
         children: [
           const Text(
-            'Live Match',
+            'Featured Match',
             style: TextStyle(
-              fontSize: 18,
+              fontSize: 14,
               fontWeight: FontWeight.bold,
             ),
           ),

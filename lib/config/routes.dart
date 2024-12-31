@@ -3,8 +3,11 @@ import 'package:flutter/material.dart';
 
 import '../views/screens/banter_room_screen.dart';
 import '../views/screens/create_post_screen.dart';
+import '../views/screens/create_profile_screen.dart';
 import '../views/screens/home_screen.dart';
 import '../views/screens/match_detail_screen.dart';
+import '../views/screens/otp_screen.dart';
+import '../views/screens/profile_screen.dart';
 import '../views/screens/register_screen.dart';
 import 'wrapper.dart';
 
@@ -16,11 +19,20 @@ class RouteGenerator {
       case Wrapper.id:
         return _route(const Wrapper());
 
-        case RegisterScreen.id:
+      case RegisterScreen.id:
         return _route(const RegisterScreen());
+
+      case OtpScreen.id:
+        return _route(OtpScreen(verificationId: args,));
+
+      case CreateProfileScreen.id:
+        return _route(const CreateProfileScreen());
 
       case HomeScreen.id:
         return _route(const HomeScreen());
+
+      case UserProfile.id:
+        return _route(const UserProfile());
 
       case MatchDetailScreen.id:
         return _route(MatchDetailScreen(liveMatchData: args,));

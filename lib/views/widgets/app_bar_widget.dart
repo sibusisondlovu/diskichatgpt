@@ -1,3 +1,4 @@
+import 'package:diskigpt/config/theme.dart';
 import 'package:flutter/material.dart';
 
 class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -7,7 +8,7 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
   const DiskiAppBar({
     super.key,
     required this.userName,
-    this.userImage,
+    required this.userImage,
   });
 
   @override
@@ -16,7 +17,7 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: AppTheme.secondaryColor,
       elevation: 0,
       toolbarHeight: 70,
       title: Row(
@@ -32,16 +33,21 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
                 width: 2,
               ),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: userImage != null
-                  ? Image.network(
-                userImage!,
-                fit: BoxFit.cover,
-              )
-                  : const Icon(
-                Icons.person,
-                color: Colors.white,
+            child: GestureDetector(
+              onTap: (){
+                Navigator.pushNamed(context, 'userProfileScreen');
+              },
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: userImage != null
+                    ? Image.network(
+                  userImage!,
+                  fit: BoxFit.cover,
+                )
+                    : const Icon(
+                  Icons.person,
+                  color: Colors.white,
+                ),
               ),
             ),
           ),
