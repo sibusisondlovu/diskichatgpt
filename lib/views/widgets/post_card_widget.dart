@@ -1,6 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../config/constants.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
 class DiskiPostCard extends StatelessWidget {
+  final String postId;
   final String username;
   final String userAvatar;
   final String teamLogo;
@@ -15,6 +20,7 @@ class DiskiPostCard extends StatelessWidget {
 
   const DiskiPostCard({
     super.key,
+    required this.postId,
     required this.username,
     required this.userAvatar,
     required this.teamLogo,
@@ -30,16 +36,21 @@ class DiskiPostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 1,
-      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildPostHeader(),
-          _buildPostContent(),
-          _buildPostActions(),
-        ],
+    return GestureDetector(
+      onTap: (){
+        Navigator.pushNamed(context, 'postDetailsPage', arguments: postId);
+      },
+      child: Card(
+        elevation: 1,
+        margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildPostHeader(),
+            _buildPostContent(),
+            _buildPostActions(),
+          ],
+        ),
       ),
     );
   }
@@ -150,15 +161,7 @@ class DiskiPostCard extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Post Text
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 5),
-          child: Text(
-            postText,
-            style: const TextStyle(fontSize: 12),
-            maxLines: 6,
-            overflow: TextOverflow.ellipsis,
-          ),
-        ),
+
         if (postImage != null) ...[
           const SizedBox(height: 8),
           // Post Image
@@ -171,6 +174,15 @@ class DiskiPostCard extends StatelessWidget {
             ),
           ),
         ],
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Text(
+            postText,
+            style: const TextStyle(fontSize: 12),
+            maxLines: 6,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
       ],
     );
   }
@@ -187,6 +199,28 @@ class DiskiPostCard extends StatelessWidget {
           _buildActionButton(Icons.share_outlined, null),
         ],
       ),
+    );
+  }
+
+  static DiskiPostCard fromDocumentSnapshot(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+    final createdAt = data['createdAt'] != null
+        ? (data['createdAt'] as Timestamp).toDate()
+        : null;
+
+    return DiskiPostCard(
+      postId: data['postId'],
+      username: data['username'] ?? 'Guest', // Provide default values to avoid null errors
+      userAvatar: data['userAvatar'] ?? '',
+      teamLogo: data['teamLogo'] ?? Strings.defaultTeamLogo,
+      teamName: data['teamName'] ?? 'Diskichat FC',
+      userLevel: data['userLevel'] ?? 0,
+      postText: data['postText'] ?? '',
+      postImage: data['postImage'],
+      timeAgo: createdAt != null ? timeago.format(createdAt) : 'Just now',
+      likes: data['likes'] ?? 0,
+      comments: data['comments'] ?? 0,
+      shares: data['shares'] ?? 0,
     );
   }
 

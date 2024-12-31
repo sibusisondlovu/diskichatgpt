@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:diskigpt/config/theme.dart';
 import 'package:diskigpt/views/widgets/app_bar_widget.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/post_card_widget.dart';
@@ -15,11 +16,16 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? liveMatchData;
+  late final Stream<QuerySnapshot> _postsStream;
 
   @override
   void initState() {
     super.initState();
     _fetchLiveMatch();
+    _postsStream = FirebaseFirestore.instance
+        .collection('posts')
+        .orderBy('createdAt', descending: true)
+        .snapshots();
   }
 
   Future<void> _fetchLiveMatch() async {
@@ -29,13 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
          // .orderBy('timestamp') // Assumes you want the earliest match by timestamp
           .limit(1)
           .get();
-
-      print(liveMatchData.toString());
-
       if (querySnapshot.docs.isNotEmpty) {
         setState(() {
           liveMatchData = querySnapshot.docs.first.data();
-          print(liveMatchData.toString());
         });
       }
     } catch (e) {
@@ -230,20 +232,28 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 16),
         StreamBuilder<QuerySnapshot>(
-          stream: _postsStream, // Use the defined posts stream
+          stream: _postsStream,
           builder: (context, snapshot) {
             if (snapshot.hasError) {
-              return Text(
-                'Error fetching posts: ${snapshot.error}',
-                style: const TextStyle(color: Colors.red),
+              return Center(
+                child: Text(
+                  'Error fetching posts: ${snapshot.error}',
+                  style: const TextStyle(color: Colors.red, fontSize: 16),
+                ),
+              );
+            }
+
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
             }
 
             if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-              return Center(
+              return const Center(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Text(
                       'No posts yet.',
                       style: TextStyle(fontSize: 16),
@@ -259,8 +269,32 @@ class _HomeScreenState extends State<HomeScreen> {
             }
 
             final posts = snapshot.data!.docs.map((doc) {
-              return DiskiPostCard.fromFirestore(doc.data() as Map<String, dynamic>); // Map data to DiskiPostCard
-            }).toList();
+              final data = doc.data();
+              if (data != null && data is Map<String, dynamic>) {
+                try {
+                  return DiskiPostCard.fromDocumentSnapshot(doc);
+                } catch (e) {
+                  if (kDebugMode) {
+                    print('Error parsing document: $e');
+                  }
+                  return null; // Filter out invalid posts
+                }
+              } else {
+                if (kDebugMode) {
+                  print('Error: Unexpected data format in Firestore document');
+                }
+                return null; // Filter out invalid posts
+              }
+            }).whereType<DiskiPostCard>().toList(); // Ensure valid types only
+
+            if (posts.isEmpty) {
+              return const Center(
+                child: Text(
+                  'No valid posts available.',
+                  style: TextStyle(color: Colors.grey, fontSize: 16),
+                ),
+              );
+            }
 
             return SizedBox(
               height: 400,
@@ -276,7 +310,6 @@ class _HomeScreenState extends State<HomeScreen> {
         const SizedBox(height: 16),
         ElevatedButton.icon(
           onPressed: () {
-            // Navigate to your "Create Post" screen
             Navigator.pushNamed(context, 'createPostScreen'); // Replace with your route name
           },
           icon: const Icon(Icons.add),

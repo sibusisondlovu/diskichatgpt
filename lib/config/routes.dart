@@ -1,8 +1,11 @@
+import 'package:diskigpt/views/pages/post_details_page.dart';
 import 'package:flutter/material.dart';
 
 import '../views/screens/banter_room_screen.dart';
+import '../views/screens/create_post_screen.dart';
 import '../views/screens/home_screen.dart';
 import '../views/screens/match_detail_screen.dart';
+import '../views/screens/register_screen.dart';
 import 'wrapper.dart';
 
 class RouteGenerator {
@@ -13,6 +16,9 @@ class RouteGenerator {
       case Wrapper.id:
         return _route(const Wrapper());
 
+        case RegisterScreen.id:
+        return _route(const RegisterScreen());
+
       case HomeScreen.id:
         return _route(const HomeScreen());
 
@@ -21,6 +27,12 @@ class RouteGenerator {
         
       case BanterRoom.id:
         return _route(BanterRoom(roomId: args.toString(),));
+
+      case CreatePostScreen.id:
+        return _route(const CreatePostScreen());
+
+      case PostDetailsPage.id:
+        return _route(PostDetailsPage(postId: args));
 
       default:
         return _errorRoute(settings.name);
