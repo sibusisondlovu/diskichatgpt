@@ -1,4 +1,7 @@
+import 'package:diskigpt/views/widgets/custom_button_widget.dart';
 import 'package:flutter/material.dart';
+
+import '../../config/theme.dart';
 
 class MatchDetailScreen extends StatelessWidget {
   const MatchDetailScreen({super.key, required this.liveMatchData});
@@ -9,17 +12,27 @@ class MatchDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: AppTheme.secondaryColor,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(
+            Icons.arrow_back,
+            color: Colors.white,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text('Match Detail'),
+        title: const Text(
+          'Match Center',
+          style: TextStyle(fontSize: 14),
+        ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.chat),
+            icon: const Icon(
+              Icons.chat,
+              color: Colors.white,
+            ),
             onPressed: () {
-              Navigator.pushNamed(context, 'banterRoomScreen', arguments: liveMatchData['fixture']['id']);
+              Navigator.pushNamed(context, 'banterRoomScreen',
+                  arguments: liveMatchData['fixture']['id']);
             },
           ),
         ],
@@ -28,8 +41,13 @@ class MatchDetailScreen extends StatelessWidget {
         child: Column(
           children: [
             _buildScoreCard(),
-            _buildTabBar(),
-            _buildStats(),
+            liveMatchData['fixture']['status']['short'] == 'NS'
+                ? Container()
+                : _buildTabBar(),
+            liveMatchData['fixture']['status']['short'] == 'NS'
+                ? Container()
+                : _buildStats(),
+            liveMatchData['fixture']['status']['short'] == 'NS'? _buildNotStarted(context): Container()
           ],
         ),
       ),
@@ -37,7 +55,6 @@ class MatchDetailScreen extends StatelessWidget {
   }
 
   Widget _buildScoreCard() {
-    print(liveMatchData);
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -55,7 +72,6 @@ class MatchDetailScreen extends StatelessWidget {
                       height: 60,
                       width: 60,
                     ),
-
                     Text(
                       liveMatchData['teams']['home']['name'],
                       style: const TextStyle(
@@ -76,7 +92,10 @@ class MatchDetailScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      liveMatchData['fixture']['status']['long'] == 'Not Started' ? '0 : 0' : '' ,
+                      liveMatchData['fixture']['status']['long'] ==
+                              'Not Started'
+                          ? '0 : 0'
+                          : '',
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -88,7 +107,8 @@ class MatchDetailScreen extends StatelessWidget {
                 Column(
                   children: [
                     Image.network(
-                      liveMatchData['teams']['away']['logo'].toString(), // Replace with actual logo
+                      liveMatchData['teams']['away']['logo']
+                          .toString(), // Replace with actual logo
                       height: 60,
                       width: 60,
                     ),
@@ -111,6 +131,61 @@ class MatchDetailScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildNotStarted(BuildContext context) {
+    return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            // Match Not Started Image
+            Image.asset(
+              'assets/images/ns.jpeg', // Ensure the image is added in your assets folder
+              height: 200,
+              fit: BoxFit.contain,
+            ),
+            const SizedBox(height: 16),
+
+            // Informational Text
+            const Text(
+              "The match hasn't started yet! 🚀",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 10),
+            const Text(
+              "Once the match begins, you'll gain access to detailed stats, live events, and the banter room. "
+              "Join the live banter to share your views, comment on every incident, and earn points as you interact with other fans!",
+              style: TextStyle(fontSize: 14),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 20),
+
+            // Buttons
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CustomElevatedButton(
+                  onPressed: () {
+                    // Navigate to betting tips
+                    Navigator.pushNamed(context, '/bettingTips');
+                  },
+                  text:  "Betting Tips",
+                ),
+                const SizedBox(width: 20),
+                CustomOutlinedButton(
+                  onPressed: () {
+                    // Navigate to team forms
+                    Navigator.pushNamed(context, '/teamForms');
+                  },
+
+                  text: "Team Forms",
+                ),
+              ],
+            ),
+          ],
+        ));
+  }
+
   Widget _buildScorersList() {
     return Column(
       children: [
@@ -120,7 +195,8 @@ class MatchDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildScorerRow(String homePlayer, String homeTime, String awayPlayer, String awayTime) {
+  Widget _buildScorerRow(
+      String homePlayer, String homeTime, String awayPlayer, String awayTime) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(

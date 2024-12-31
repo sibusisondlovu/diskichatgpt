@@ -67,8 +67,8 @@ class _UserProfileState extends State<UserProfile> {
   }
 
   void _editTeam() {
-    // Navigate to a screen where the user can edit their team
-    Navigator.pushNamed(context, 'editTeamScreen');
+   //TODO add edit team functionality
+    //Navigator.pushNamed(context, 'editTeamScreen');
   }
 
   @override
@@ -119,9 +119,9 @@ class _UserProfileState extends State<UserProfile> {
             Card(
               margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
               child: ListTile(
-                leading: const Icon(Icons.star, color: AppTheme.secondaryColor, size: 40),
-                title: const Text('Level', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
-                subtitle: Text(userLevel, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
+                leading: const Icon(Icons.military_tech, color: Colors.brown, size: 45,),
+                title: Text(userLevel, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
+                subtitle: const Text('Free Plan', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),),
                 trailing: Text(
                   '$userPoints Points',
                   style: const TextStyle(fontWeight: FontWeight.bold),

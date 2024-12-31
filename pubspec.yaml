@@ -26,7 +26,6 @@ dependencies:
   timeago: ^3.3.0
   video_player:
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

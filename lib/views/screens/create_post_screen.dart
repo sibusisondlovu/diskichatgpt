@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:diskigpt/config/theme.dart';
+import 'package:diskigpt/views/widgets/custom_button_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
@@ -52,13 +54,27 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
       try {
         // Upload the file to Cloudinary
        // final imageUrl = await CloudinaryService.uploadImage(file!);
+        User? user = FirebaseAuth.instance.currentUser;
         final postId = FirebaseFirestore.instance.collection('posts').doc().id;
+
+        DocumentSnapshot userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get();
+
+        Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+        String teamLogo = userData?['teamLogo'] ?? '';
+        String teamName = userData?['teamName'] ?? '';
+        String userLevel = userData?['level'] ?? 'Beginner';
 
         await FirebaseFirestore.instance.collection('posts').doc(postId).set({
           'postId': postId,
-          'userId': user?.uid ?? 'qazxsde',
-          'username': user?.displayName ?? 'User',
+          'userId': user?.uid ?? 'diskichat',
+          'username': user?.displayName ?? 'Guest',
           'userAvatar': user?.photoURL ?? Strings.defaultProfileImage,
+          'teamLogo':teamLogo,
+          'teamName' :teamName,
+          //'userLevel' : userLevel,
           'postText': _captionController.text,
           'postImage': imageUrl ?? Strings.defaultPostImage,
           'postVideo': imageUrl ?? Strings.defaultPostImage,
@@ -96,8 +112,6 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         }
       });
       Navigator.pop(context); // Return to previous screen
-      ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Post uploaded successfully')));
 
     } catch (e) {
       setState(() {
@@ -118,7 +132,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Create Post')),
+      appBar: AppBar(
+          backgroundColor: AppTheme.darkColor,
+          title: const Text('Create Post')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -171,17 +187,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             TextField(
               controller: _captionController,
               maxLines: 3,
+              style: const TextStyle(fontSize: 12),
               decoration: const InputDecoration(
                 hintText: 'Write a caption...',
                 border: OutlineInputBorder(),
               ),
             ),
             const SizedBox(height: 16),
-            ElevatedButton(
+            CustomElevatedButton(
               onPressed: _isUploading ? null : _uploadPost,
-              child: _isUploading
-                  ? const CircularProgressIndicator()
-                  : const Text('Post'),
+              text: _isUploading
+                  ? 'Posting...'
+                  : 'Post',
             ),
           ],
         ),

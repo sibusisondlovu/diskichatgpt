@@ -6,9 +6,11 @@ import '../views/screens/create_post_screen.dart';
 import '../views/screens/create_profile_screen.dart';
 import '../views/screens/home_screen.dart';
 import '../views/screens/match_detail_screen.dart';
+import '../views/screens/notification_screen.dart';
 import '../views/screens/otp_screen.dart';
 import '../views/screens/profile_screen.dart';
 import '../views/screens/register_screen.dart';
+import '../views/screens/subscription_screen.dart';
 import 'wrapper.dart';
 
 class RouteGenerator {
@@ -36,6 +38,12 @@ class RouteGenerator {
 
       case MatchDetailScreen.id:
         return _route(MatchDetailScreen(liveMatchData: args,));
+
+      case NotificationScreen.id:
+        return _route(const NotificationScreen());
+
+      case SubscriptionScreen.id:
+        return _route(const SubscriptionScreen());
         
       case BanterRoom.id:
         return _route(BanterRoom(roomId: args.toString(),));

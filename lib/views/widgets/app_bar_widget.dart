@@ -17,7 +17,7 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: AppTheme.secondaryColor,
+      backgroundColor: AppTheme.darkColor,
       elevation: 0,
       toolbarHeight: 70,
       title: Row(
@@ -79,18 +79,6 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
-        // Search Icon
-        IconButton(
-          icon: const Icon(
-            Icons.search,
-            color: Colors.white,
-            size: 28,
-          ),
-          onPressed: () {
-            // Implement search functionality
-          },
-        ),
-        // Notification Icon with Badge
         Stack(
           alignment: Alignment.center,
           children: [
@@ -101,7 +89,7 @@ class DiskiAppBar extends StatelessWidget implements PreferredSizeWidget {
                 size: 28,
               ),
               onPressed: () {
-                // Implement notifications functionality
+                Navigator.pushNamed(context, 'notificationScreen');
               },
             ),
             Positioned(

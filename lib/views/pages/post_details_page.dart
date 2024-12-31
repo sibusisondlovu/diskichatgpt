@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dash_chat_2/dash_chat_2.dart';
+import 'package:diskigpt/config/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +14,7 @@ class PostDetailsPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Post Details'),
+        backgroundColor: AppTheme.darkColor,
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('posts').doc(postId).snapshots(),
@@ -36,11 +36,11 @@ class PostDetailsPage extends StatelessWidget {
 
               // Comments Section
               Expanded(
-                child: _buildCommentsSection(postId, currentUser),
+                child: _buildCommentsSection(postId),
               ),
 
               // Add Comment Input
-              _buildCommentInput(postId, 'currentUser'),
+              _buildCommentInput(postId, currentUser),
             ],
           );
         },
@@ -58,10 +58,11 @@ class PostDetailsPage extends StatelessWidget {
             leading: CircleAvatar(
               backgroundImage: NetworkImage(post['userAvatar']),
             ),
-            title: Text(post['username']),
-            subtitle: Text(post['createdAt'].toDate().toString()), // Format as needed
+            title: Text(
+              post['username'],
+              style: const TextStyle(fontSize: 12),
+            ),
           ),
-
           if (post['postImage'] != null)
             Image.network(
               post['postImage'],
@@ -71,7 +72,10 @@ class PostDetailsPage extends StatelessWidget {
           if (post['postText'] != null)
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: Text(post['postText']),
+              child: Text(
+                post['postText'],
+                style: const TextStyle(fontSize: 12),
+              ),
             ),
           Row(
             children: [
@@ -81,13 +85,9 @@ class PostDetailsPage extends StatelessWidget {
                   // Like functionality (not implemented here)
                 },
               ),
-              Text('${post['likes']} Likes'),
-              const Spacer(),
-              IconButton(
-                icon: const Icon(Icons.share),
-                onPressed: () {
-                  // Share functionality (not implemented here)
-                },
+              Text(
+                '${post['likes']} Likes',
+                style: const TextStyle(fontSize: 10),
               ),
             ],
           ),
@@ -96,7 +96,7 @@ class PostDetailsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildCommentsSection(String postId, User? currentUser) {
+  Widget _buildCommentsSection(String postId) {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection('posts')
@@ -110,36 +110,35 @@ class PostDetailsPage extends StatelessWidget {
         }
 
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No comments yet. Be the first to comment!'));
+          return const Center(
+            child: Text('No comments yet. Be the first to comment!'),
+          );
         }
 
-        final messages = snapshot.data!.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          return ChatMessage(
-            user: ChatUser(
-              id: data['userId'],
-              firstName: data['username'],
-              profileImage: data['userAvatar'],
-            ),
-            text: data['commentText'],
-            createdAt: (data['createdAt'] as Timestamp).toDate(),
-          );
-        }).toList();
-
-        return DashChat(
-          currentUser: ChatUser(
-            id: currentUser?.uid ?? 'guest',
-            firstName: currentUser?.displayName ?? 'Guest',
-            profileImage: currentUser?.photoURL ??
-                'https://jaspahost.co.za/assets/diskichat-default-avatar.png',
-          ),
-          messages: messages, onSend: (ChatMessage message) {  },
+        return ListView(
+          children: snapshot.data!.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            return ListTile(
+              leading: CircleAvatar(
+                radius: 15,
+                backgroundImage: NetworkImage(data['userAvatar']),
+              ),
+              title: Text(
+                data['username'],
+                style: const TextStyle(fontSize: 11),
+              ),
+              subtitle: Text(
+                data['commentText'],
+                style: const TextStyle(fontSize: 10),
+              ),
+            );
+          }).toList(),
         );
       },
     );
   }
 
-  Widget _buildCommentInput(String postId, currentUser) {
+  Widget _buildCommentInput(String postId, User? currentUser) {
     final TextEditingController commentController = TextEditingController();
 
     return Padding(
@@ -161,7 +160,7 @@ class PostDetailsPage extends StatelessWidget {
             icon: const Icon(Icons.send),
             onPressed: () async {
               final commentText = commentController.text.trim();
-              if (commentText.isNotEmpty) {
+              if (commentText.isNotEmpty && currentUser != null) {
                 await FirebaseFirestore.instance
                     .collection('posts')
                     .doc(postId)

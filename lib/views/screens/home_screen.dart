@@ -4,6 +4,7 @@ import 'package:diskigpt/views/widgets/app_bar_widget.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+//import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../config/constants.dart';
 import '../widgets/post_card_widget.dart';
@@ -19,11 +20,14 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   Map<String, dynamic>? liveMatchData;
   late final Stream<QuerySnapshot> _postsStream;
+  //late BannerAd _bannerAd;
+  bool _isBannerAdReady = false;
 
   @override
   void initState() {
     super.initState();
     _fetchLiveMatch();
+    //_loadBannerAd();
     _postsStream = FirebaseFirestore.instance
         .collection('posts')
         .orderBy('createdAt', descending: true)
@@ -43,9 +47,30 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     } catch (e) {
-      print('Error fetching live match: $e');
+      if (kDebugMode) {
+        print('Error fetching live match: $e');
+      }
     }
   }
+  // void _loadBannerAd() {
+  //   _bannerAd = BannerAd(
+  //     adUnitId: 'ca-app-pub-4968166984968289/1718403249', // Replace with your banner ad unit ID
+  //     size: AdSize.banner,
+  //     request: AdRequest(),
+  //     listener: BannerAdListener(
+  //       onAdLoaded: (ad) {
+  //         setState(() {
+  //           _isBannerAdReady = true;
+  //         });
+  //       },
+  //       onAdFailedToLoad: (ad, error) {
+  //         print('Banner Ad failed to load: $error');
+  //         ad.dispose();
+  //       },
+  //     ),
+  //   );
+  //   _bannerAd.load();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -65,8 +90,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(height: 8),
           _buildLiveMatchCard(),
+          // if (_isBannerAdReady)
+          //   SizedBox(
+          //     height: _bannerAd.size.height.toDouble(),
+          //     child: AdWidget(ad: _bannerAd),
+          //   ),
           const SizedBox(height: 24),
           _buildLatestNewsSection(),
+
         ],
       ),
     );

@@ -101,7 +101,7 @@ class DiskiPostCard extends StatelessWidget {
                           ),
                           const SizedBox(width: 2),
                           Text(
-                            'Lvl $userLevel',
+                            userLevel.toString(),
                             style: TextStyle(
                               fontSize: 11,
                               color: Colors.purple[700],
@@ -194,9 +194,9 @@ class DiskiPostCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildActionButton(Icons.chat_bubble_outline, comments),
-          _buildActionButton(Icons.repeat, shares),
+         // _buildActionButton(Icons.repeat, shares),
           _buildActionButton(Icons.favorite_border, likes),
-          _buildActionButton(Icons.share_outlined, null),
+        //  _buildActionButton(Icons.share_outlined, null),
         ],
       ),
     );

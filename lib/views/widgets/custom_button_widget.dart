@@ -22,7 +22,7 @@ class CustomElevatedButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.mainColor,
+          backgroundColor: AppTheme.secondaryColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -55,6 +55,7 @@ class CustomOutlinedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: MediaQuery.of(context).size.width * 0.8,
       margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: OutlinedButton(
         onPressed: onPressed,

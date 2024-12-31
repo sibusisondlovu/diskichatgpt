@@ -25,7 +25,8 @@ class AppTheme {
       ),
       appBarTheme: const AppBarTheme(
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        iconTheme: IconThemeData(color: Colors.white),
+        backgroundColor: AppTheme.darkColor ,
         centerTitle: true, // Center the title
         titleTextStyle: TextStyle(
           fontSize: 16.0, // Set font size
